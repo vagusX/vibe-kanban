@@ -172,7 +172,9 @@
     },
     "planComments": {
       "count_one": "{{count}} plan comment will be included",
-      "count_other": "{{count}} plan comments will be included"
+      "count_other": "{{count}} plan comments will be included",
+      "dialogTitle": "Add plan comment",
+      "dialogDescription": "Add feedback for the selected plan text."
     },
     "workspace": {
       "create": "Create",

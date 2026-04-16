@@ -55,6 +55,7 @@ import {
 import { inIframe, openFileInVSCode } from '@/integrations/vscode/bridge';
 import { useDiffViewMode } from '@/shared/stores/useDiffViewStore';
 import { usePlanReviewOptional } from '@/shared/hooks/usePlanReview';
+import { PlanSelectionCommentDialog } from '@/shared/dialogs/tasks/PlanSelectionCommentDialog';
 import type {
   AggregatedPatchGroup,
   AggregatedDiffGroup,
@@ -488,7 +489,6 @@ function AppChatMarkdown({
 }) {
   const { viewFileInChanges, findMatchingDiffPath } = useChangesViewActions();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { t } = useTranslation('common');
 
   const handleMouseUp = useCallback(() => {
     if (!onAddSelectionComment || !containerRef.current) return;
@@ -510,12 +510,15 @@ function AppChatMarkdown({
       return;
     }
 
-    const comment = window.prompt(t('comments.addPlaceholder'));
-    if (!comment || !comment.trim()) return;
-
-    onAddSelectionComment(selectedText, comment.trim());
-    selection.removeAllRanges();
-  }, [onAddSelectionComment, t]);
+    void (async () => {
+      const result = await PlanSelectionCommentDialog.show({
+        selectedText,
+      });
+      if (result.action !== 'confirmed') return;
+      onAddSelectionComment(selectedText, result.comment);
+      selection.removeAllRanges();
+    })();
+  }, [onAddSelectionComment]);
 
   return (
     <div ref={containerRef} onMouseUp={handleMouseUp}>

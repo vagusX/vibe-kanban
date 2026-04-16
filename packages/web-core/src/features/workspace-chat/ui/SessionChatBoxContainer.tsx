@@ -843,6 +843,7 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
   // Handle request changes (deny with feedback)
   const handleRequestChanges = useCallback(async () => {
     if (!pendingApproval) return;
+    // Allow requesting changes with only plan-selection comments (no free-form text).
     const reason = buildAgentPrompt(localMessage, [
       planReviewMarkdown,
     ]).prompt.trim();
