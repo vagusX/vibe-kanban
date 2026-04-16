@@ -1,4 +1,10 @@
-import { useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from 'react';
 import { genId } from '@/shared/lib/id';
 import {
   PlanReviewContext,
@@ -14,13 +20,10 @@ export function PlanReviewProvider({
 }) {
   const [comments, setComments] = useState<PlanReviewComment[]>([]);
 
-  const addComment = useCallback(
-    (comment: Omit<PlanReviewComment, 'id'>) => {
-      const next: PlanReviewComment = { ...comment, id: genId() };
-      setComments((prev) => [...prev, next]);
-    },
-    []
-  );
+  const addComment = useCallback((comment: Omit<PlanReviewComment, 'id'>) => {
+    const next: PlanReviewComment = { ...comment, id: genId() };
+    setComments((prev) => [...prev, next]);
+  }, []);
 
   const clearComments = useCallback(() => {
     setComments([]);

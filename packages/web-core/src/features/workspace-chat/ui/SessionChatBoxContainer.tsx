@@ -519,10 +519,10 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
       setLocalMessage('');
       clearUploadedAttachments();
       if (isNewSessionMode) await clearDraft();
-        if (!isSlashCommand) {
-          reviewContext?.clearComments();
-          planReviewContext?.clearComments();
-        }
+      if (!isSlashCommand) {
+        reviewContext?.clearComments();
+        planReviewContext?.clearComments();
+      }
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           onScrollToBottom('auto');
@@ -567,7 +567,11 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
   // Queue message handler
   const handleQueueMessage = useCallback(async () => {
     // Allow queueing if there's a message OR review comments, and we have a config
-    if ((!localMessage.trim() && !reviewMarkdown && !planReviewMarkdown) || !executorConfig) return;
+    if (
+      (!localMessage.trim() && !reviewMarkdown && !planReviewMarkdown) ||
+      !executorConfig
+    )
+      return;
 
     const { prompt } = buildAgentPrompt(localMessage, [
       reviewMarkdown,
@@ -839,7 +843,9 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
   // Handle request changes (deny with feedback)
   const handleRequestChanges = useCallback(async () => {
     if (!pendingApproval) return;
-    const reason = buildAgentPrompt(localMessage, [planReviewMarkdown]).prompt.trim();
+    const reason = buildAgentPrompt(localMessage, [
+      planReviewMarkdown,
+    ]).prompt.trim();
     if (!reason) return;
 
     try {
