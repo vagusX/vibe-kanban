@@ -488,7 +488,23 @@ function AppChatMarkdown({
   onAddSelectionComment?: (selectedText: string, comment: string) => void;
 }) {
   const { viewFileInChanges, findMatchingDiffPath } = useChangesViewActions();
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const openPlanSelectionCommentDialog = useCallback(
+    async (selectedText: string, selection: Selection) => {
+      try {
+        const result = await PlanSelectionCommentDialog.show({
+          selectedText,
+        });
+        if (result.action !== 'confirmed') return;
+        onAddSelectionComment?.(selectedText, result.comment);
+        selection.removeAllRanges();
+      } catch (error) {
+        console.error('Failed to open plan selection comment dialog:', error);
+      }
+    },
+    [onAddSelectionComment]
+  );
 
   const handleMouseUp = useCallback(() => {
     if (!onAddSelectionComment || !containerRef.current) return;
@@ -510,15 +526,8 @@ function AppChatMarkdown({
       return;
     }
 
-    void (async () => {
-      const result = await PlanSelectionCommentDialog.show({
-        selectedText,
-      });
-      if (result.action !== 'confirmed') return;
-      onAddSelectionComment(selectedText, result.comment);
-      selection.removeAllRanges();
-    })();
-  }, [onAddSelectionComment]);
+    void openPlanSelectionCommentDialog(selectedText, selection);
+  }, [onAddSelectionComment, openPlanSelectionCommentDialog]);
 
   return (
     <div ref={containerRef} onMouseUp={handleMouseUp}>

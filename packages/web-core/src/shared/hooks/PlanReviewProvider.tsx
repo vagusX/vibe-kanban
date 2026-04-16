@@ -30,7 +30,7 @@ export function PlanReviewProvider({
   }, []);
 
   useEffect(() => {
-    return () => clearComments();
+    clearComments();
   }, [workspaceId, clearComments]);
 
   const generatePlanReviewMarkdown = useCallback(() => {
