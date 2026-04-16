@@ -20,6 +20,7 @@ import { useMessageEditContext } from '../model/contexts/MessageEditContext';
 import { useEntries, useTokenUsage } from '../model/contexts/EntriesContext';
 import { useExecutionProcesses } from '@/shared/hooks/useExecutionProcesses';
 import { useReviewOptional } from '@/shared/hooks/useReview';
+import { usePlanReviewOptional } from '@/shared/hooks/usePlanReview';
 import { useActions } from '@/shared/hooks/useActions';
 import { useTodos } from '../model/hooks/useTodos';
 import { getLatestConfigFromProcesses } from '@/shared/lib/executor';
@@ -302,6 +303,12 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
     [reviewContext]
   );
   const hasReviewComments = (reviewContext?.comments.length ?? 0) > 0;
+  const planReviewContext = usePlanReviewOptional();
+  const planReviewMarkdown = useMemo(
+    () => planReviewContext?.generatePlanReviewMarkdown() ?? '',
+    [planReviewContext]
+  );
+  const hasPlanReviewComments = (planReviewContext?.comments.length ?? 0) > 0;
 
   // Approval mutation for approve/deny/answer actions
   const {
@@ -501,6 +508,7 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
   const handleSend = useCallback(async () => {
     const { prompt, isSlashCommand } = buildAgentPrompt(localMessage, [
       reviewMarkdown,
+      planReviewMarkdown,
     ]);
 
     onScrollToBottom('auto');
@@ -513,6 +521,7 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
       if (isNewSessionMode) await clearDraft();
       if (!isSlashCommand) {
         reviewContext?.clearComments();
+        planReviewContext?.clearComments();
       }
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -525,12 +534,14 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
     send,
     localMessage,
     reviewMarkdown,
+    planReviewMarkdown,
     cancelDebouncedSave,
     setLocalMessage,
     clearUploadedAttachments,
     isNewSessionMode,
     clearDraft,
     reviewContext,
+    planReviewContext,
   ]);
 
   // Track previous process count for queue refresh
@@ -556,9 +567,16 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
   // Queue message handler
   const handleQueueMessage = useCallback(async () => {
     // Allow queueing if there's a message OR review comments, and we have a config
-    if ((!localMessage.trim() && !reviewMarkdown) || !executorConfig) return;
+    if (
+      (!localMessage.trim() && !reviewMarkdown && !planReviewMarkdown) ||
+      !executorConfig
+    )
+      return;
 
-    const { prompt } = buildAgentPrompt(localMessage, [reviewMarkdown]);
+    const { prompt } = buildAgentPrompt(localMessage, [
+      reviewMarkdown,
+      planReviewMarkdown,
+    ]);
 
     cancelDebouncedSave();
     await saveToScratch(localMessage, executorConfig);
@@ -568,9 +586,11 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
     setLocalMessage('');
     clearUploadedAttachments();
     reviewContext?.clearComments();
+    planReviewContext?.clearComments();
   }, [
     localMessage,
     reviewMarkdown,
+    planReviewMarkdown,
     executorConfig,
     queueMessage,
     cancelDebouncedSave,
@@ -578,6 +598,7 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
     setLocalMessage,
     clearUploadedAttachments,
     reviewContext,
+    planReviewContext,
   ]);
 
   // Editor change handler
@@ -821,17 +842,23 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
 
   // Handle request changes (deny with feedback)
   const handleRequestChanges = useCallback(async () => {
-    if (!pendingApproval || !localMessage.trim()) return;
+    if (!pendingApproval) return;
+    // Allow requesting changes with only plan-selection comments (no free-form text).
+    const reason = buildAgentPrompt(localMessage, [
+      planReviewMarkdown,
+    ]).prompt.trim();
+    if (!reason) return;
 
     try {
       await denyAsync({
         approvalId: pendingApproval.approvalId,
         executionProcessId: pendingApproval.executionProcessId,
-        reason: localMessage.trim(),
+        reason,
       });
       cancelDebouncedSave();
       setLocalMessage('');
       await clearDraft();
+      planReviewContext?.clearComments();
 
       // Invalidate workspace summary cache to update sidebar
       queryClient.invalidateQueries({ queryKey: workspaceSummaryKeys.all });
@@ -842,10 +869,12 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
   }, [
     pendingApproval,
     localMessage,
+    planReviewMarkdown,
     denyAsync,
     cancelDebouncedSave,
     setLocalMessage,
     clearDraft,
+    planReviewContext,
     queryClient,
     onScrollToBottom,
   ]);
@@ -1119,6 +1148,14 @@ export function SessionChatBoxContainer(props: SessionChatBoxContainerProps) {
               count: reviewContext.comments.length,
               previewMarkdown: reviewMarkdown,
               onClear: reviewContext.clearComments,
+            }
+          : undefined
+      }
+      planComments={
+        hasPlanReviewComments && planReviewContext
+          ? {
+              count: planReviewContext.comments.length,
+              onClear: planReviewContext.clearComments,
             }
           : undefined
       }

@@ -54,6 +54,8 @@ import {
 } from '@vibe/ui/components/PierreConversationDiff';
 import { inIframe, openFileInVSCode } from '@/integrations/vscode/bridge';
 import { useDiffViewMode } from '@/shared/stores/useDiffViewStore';
+import { usePlanReviewOptional } from '@/shared/hooks/usePlanReview';
+import { PlanSelectionCommentDialog } from '@/shared/dialogs/tasks/PlanSelectionCommentDialog';
 import type {
   AggregatedPatchGroup,
   AggregatedDiffGroup,
@@ -476,33 +478,77 @@ function AppChatMarkdown({
   sessionId,
   className,
   maxWidth,
+  onAddSelectionComment,
 }: {
   content: string;
   workspaceId: string | undefined;
   sessionId: string | undefined;
   className: string | undefined;
   maxWidth: string | undefined;
+  onAddSelectionComment?: (selectedText: string, comment: string) => void;
 }) {
   const { viewFileInChanges, findMatchingDiffPath } = useChangesViewActions();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const openPlanSelectionCommentDialog = useCallback(
+    async (selectedText: string, selection: Selection) => {
+      try {
+        const result = await PlanSelectionCommentDialog.show({
+          selectedText,
+        });
+        if (result.action !== 'confirmed') return;
+        onAddSelectionComment?.(selectedText, result.comment);
+        selection.removeAllRanges();
+      } catch (error) {
+        console.error('Failed to open plan selection comment dialog:', error);
+      }
+    },
+    [onAddSelectionComment]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    if (!onAddSelectionComment || !containerRef.current) return;
+
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) return;
+
+    const selectedText = selection.toString().trim();
+    if (!selectedText) return;
+
+    const anchorNode = selection.anchorNode;
+    const focusNode = selection.focusNode;
+    if (!anchorNode || !focusNode) return;
+
+    if (
+      !containerRef.current.contains(anchorNode) ||
+      !containerRef.current.contains(focusNode)
+    ) {
+      return;
+    }
+
+    void openPlanSelectionCommentDialog(selectedText, selection);
+  }, [onAddSelectionComment, openPlanSelectionCommentDialog]);
 
   return (
-    <ChatMarkdown
-      content={content}
-      workspaceId={workspaceId}
-      className={className}
-      maxWidth={maxWidth}
-      renderContent={({ content, className, workspaceId }) => (
-        <WYSIWYGEditor
-          value={content}
-          disabled
-          className={className}
-          workspaceId={workspaceId}
-          sessionId={sessionId}
-          findMatchingDiffPath={findMatchingDiffPath}
-          onCodeClick={viewFileInChanges}
-        />
-      )}
-    />
+    <div ref={containerRef} onMouseUp={handleMouseUp}>
+      <ChatMarkdown
+        content={content}
+        workspaceId={workspaceId}
+        className={className}
+        maxWidth={maxWidth}
+        renderContent={({ content, className, workspaceId }) => (
+          <WYSIWYGEditor
+            value={content}
+            disabled
+            className={className}
+            workspaceId={workspaceId}
+            sessionId={sessionId}
+            findMatchingDiffPath={findMatchingDiffPath}
+            onCodeClick={viewFileInChanges}
+          />
+        )}
+      />
+    </div>
   );
 }
 
@@ -620,6 +666,7 @@ function PlanEntry({
   status: ToolStatus;
 }) {
   const { t } = useTranslation('common');
+  const planReviewContext = usePlanReviewOptional();
   // Expand plans by default when pending approval
   const pendingApproval = status.status === 'pending_approval';
   const [expanded, toggle] = usePersistedExpanded(
@@ -634,6 +681,16 @@ function PlanEntry({
     const cleanTitle = firstLine.replace(/^#+\s*/, '').trim();
     return cleanTitle || t('conversation.plan');
   }, [plan, t]);
+
+  const handleAddSelectionComment = useCallback(
+    (selectedText: string, comment: string) => {
+      planReviewContext?.addComment({
+        selectedText,
+        comment,
+      });
+    },
+    [planReviewContext]
+  );
 
   return (
     <ChatApprovalCard
@@ -650,6 +707,9 @@ function PlanEntry({
           sessionId={sessionId}
           className={undefined}
           maxWidth={undefined}
+          onAddSelectionComment={
+            pendingApproval ? handleAddSelectionComment : undefined
+          }
         />
       )}
     />

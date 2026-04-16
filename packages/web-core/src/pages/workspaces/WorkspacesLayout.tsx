@@ -20,6 +20,7 @@ import {
   subscribeCreateModeSeedState,
 } from '@/features/create-mode/model/createModeSeedStore';
 import { ReviewProvider } from '@/shared/hooks/ReviewProvider';
+import { PlanReviewProvider } from '@/shared/hooks/PlanReviewProvider';
 import { ChangesViewProvider } from '@/shared/hooks/ChangesViewProvider';
 import { WorkspacesSidebarContainer } from './WorkspacesSidebarContainer';
 import { LogsContentContainer } from './LogsContentContainer';
@@ -209,107 +210,109 @@ export function WorkspacesLayout() {
   // WebSocket connections and scroll positions across tab switches.
   if (isMobile) {
     const mobileContent = (
-      <ReviewProvider workspaceId={selectedWorkspace?.id}>
-        <ChangesViewProvider>
-          <div className="flex flex-col h-full min-h-0">
-            {/* Workspaces tab */}
-            <div
-              className={cn(
-                'flex-1 min-h-0 overflow-hidden',
-                mobileTab !== 'workspaces' && 'hidden'
-              )}
-            >
-              <WorkspacesSidebarContainer
-                onScrollToBottom={handleScrollToBottom}
-              />
-            </div>
-
-            {/* Chat tab */}
-            <div
-              className={cn(
-                'flex-1 min-h-0 overflow-hidden',
-                mobileTab !== 'chat' && 'hidden'
-              )}
-            >
-              {isCreateMode ? (
-                <CreateChatBoxContainer
-                  onWorkspaceCreated={handleWorkspaceCreated}
+      <PlanReviewProvider workspaceId={selectedWorkspace?.id}>
+        <ReviewProvider workspaceId={selectedWorkspace?.id}>
+          <ChangesViewProvider>
+            <div className="flex flex-col h-full min-h-0">
+              {/* Workspaces tab */}
+              <div
+                className={cn(
+                  'flex-1 min-h-0 overflow-hidden',
+                  mobileTab !== 'workspaces' && 'hidden'
+                )}
+              >
+                <WorkspacesSidebarContainer
+                  onScrollToBottom={handleScrollToBottom}
                 />
-              ) : (
-                <WorkspacesMainContainer
-                  ref={mainContainerRef}
-                  selectedWorkspace={selectedWorkspace ?? null}
-                  selectedSession={selectedSession}
-                  selectedSessionId={selectedSessionId}
-                  sessions={sessions}
-                  repos={repos}
-                  onSelectSession={selectSession}
-                  isLoading={isLoading}
-                  isSessionsLoading={isSessionsLoading}
-                  isNewSessionMode={isNewSessionMode}
-                  onStartNewSession={startNewSession}
-                />
-              )}
-            </div>
+              </div>
 
-            {/* Changes tab */}
-            <div
-              className={cn(
-                'flex-1 min-h-0 overflow-hidden',
-                mobileTab !== 'changes' && 'hidden'
-              )}
-            >
-              {selectedWorkspace?.id && (
-                <ChangesPanelContainer
-                  className=""
-                  workspaceId={selectedWorkspace.id}
-                />
-              )}
-            </div>
+              {/* Chat tab */}
+              <div
+                className={cn(
+                  'flex-1 min-h-0 overflow-hidden',
+                  mobileTab !== 'chat' && 'hidden'
+                )}
+              >
+                {isCreateMode ? (
+                  <CreateChatBoxContainer
+                    onWorkspaceCreated={handleWorkspaceCreated}
+                  />
+                ) : (
+                  <WorkspacesMainContainer
+                    ref={mainContainerRef}
+                    selectedWorkspace={selectedWorkspace ?? null}
+                    selectedSession={selectedSession}
+                    selectedSessionId={selectedSessionId}
+                    sessions={sessions}
+                    repos={repos}
+                    onSelectSession={selectSession}
+                    isLoading={isLoading}
+                    isSessionsLoading={isSessionsLoading}
+                    isNewSessionMode={isNewSessionMode}
+                    onStartNewSession={startNewSession}
+                  />
+                )}
+              </div>
 
-            {/* Logs tab */}
-            <div
-              className={cn(
-                'flex-1 min-h-0 overflow-hidden',
-                mobileTab !== 'logs' && 'hidden'
-              )}
-            >
-              <LogsContentContainer className="" />
-            </div>
+              {/* Changes tab */}
+              <div
+                className={cn(
+                  'flex-1 min-h-0 overflow-hidden',
+                  mobileTab !== 'changes' && 'hidden'
+                )}
+              >
+                {selectedWorkspace?.id && (
+                  <ChangesPanelContainer
+                    className=""
+                    workspaceId={selectedWorkspace.id}
+                  />
+                )}
+              </div>
 
-            {/* Preview tab */}
-            <div
-              className={cn(
-                'flex-1 min-h-0 overflow-hidden',
-                mobileTab !== 'preview' && 'hidden'
-              )}
-            >
-              {selectedWorkspace?.id && (
-                <PreviewBrowserContainer
-                  workspaceId={selectedWorkspace.id}
-                  className=""
-                />
-              )}
-            </div>
+              {/* Logs tab */}
+              <div
+                className={cn(
+                  'flex-1 min-h-0 overflow-hidden',
+                  mobileTab !== 'logs' && 'hidden'
+                )}
+              >
+                <LogsContentContainer className="" />
+              </div>
 
-            {/* Git tab */}
-            <div
-              className={cn(
-                'flex-1 min-h-0 overflow-hidden',
-                mobileTab !== 'git' && 'hidden'
-              )}
-            >
-              {selectedWorkspace && !isCreateMode && (
-                <RightSidebar
-                  rightMainPanelMode={rightMainPanelMode}
-                  selectedWorkspace={selectedWorkspace}
-                  repos={repos}
-                />
-              )}
+              {/* Preview tab */}
+              <div
+                className={cn(
+                  'flex-1 min-h-0 overflow-hidden',
+                  mobileTab !== 'preview' && 'hidden'
+                )}
+              >
+                {selectedWorkspace?.id && (
+                  <PreviewBrowserContainer
+                    workspaceId={selectedWorkspace.id}
+                    className=""
+                  />
+                )}
+              </div>
+
+              {/* Git tab */}
+              <div
+                className={cn(
+                  'flex-1 min-h-0 overflow-hidden',
+                  mobileTab !== 'git' && 'hidden'
+                )}
+              >
+                {selectedWorkspace && !isCreateMode && (
+                  <RightSidebar
+                    rightMainPanelMode={rightMainPanelMode}
+                    selectedWorkspace={selectedWorkspace}
+                    repos={repos}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        </ChangesViewProvider>
-      </ReviewProvider>
+          </ChangesViewProvider>
+        </ReviewProvider>
+      </PlanReviewProvider>
     );
 
     return (
@@ -331,89 +334,91 @@ export function WorkspacesLayout() {
   }
 
   const mainContent = (
-    <ReviewProvider workspaceId={selectedWorkspace?.id}>
-      <ChangesViewProvider>
-        <div className="flex h-full">
-          <Group
-            orientation="horizontal"
-            className="flex-1 min-w-0 h-full"
-            defaultLayout={defaultLayout}
-            onLayoutChange={onLayoutChange}
-          >
-            {isLeftMainPanelVisible && (
-              <Panel
-                id="left-main"
-                minSize="20%"
-                className="min-w-0 h-full overflow-hidden"
-              >
-                {isCreateMode ? (
-                  <CreateChatBoxContainer
-                    onWorkspaceCreated={handleWorkspaceCreated}
-                  />
-                ) : (
-                  <WorkspacesMainContainer
-                    ref={mainContainerRef}
-                    selectedWorkspace={selectedWorkspace ?? null}
-                    selectedSession={selectedSession}
-                    selectedSessionId={selectedSessionId}
-                    sessions={sessions}
-                    repos={repos}
-                    onSelectSession={selectSession}
-                    isLoading={isLoading}
-                    isSessionsLoading={isSessionsLoading}
-                    isNewSessionMode={isNewSessionMode}
-                    onStartNewSession={startNewSession}
-                  />
-                )}
-              </Panel>
-            )}
-
-            {isLeftMainPanelVisible && rightMainPanelMode !== null && (
-              <Separator
-                id="main-separator"
-                className="w-1 bg-transparent hover:bg-brand/50 transition-colors cursor-col-resize"
-              />
-            )}
-
-            {rightMainPanelMode !== null && (
-              <Panel
-                id="right-main"
-                minSize="20%"
-                className="min-w-0 h-full overflow-hidden"
-              >
-                {rightMainPanelMode === RIGHT_MAIN_PANEL_MODES.CHANGES &&
-                  selectedWorkspace?.id && (
-                    <ChangesPanelContainer
-                      className=""
-                      workspaceId={selectedWorkspace.id}
+    <PlanReviewProvider workspaceId={selectedWorkspace?.id}>
+      <ReviewProvider workspaceId={selectedWorkspace?.id}>
+        <ChangesViewProvider>
+          <div className="flex h-full">
+            <Group
+              orientation="horizontal"
+              className="flex-1 min-w-0 h-full"
+              defaultLayout={defaultLayout}
+              onLayoutChange={onLayoutChange}
+            >
+              {isLeftMainPanelVisible && (
+                <Panel
+                  id="left-main"
+                  minSize="20%"
+                  className="min-w-0 h-full overflow-hidden"
+                >
+                  {isCreateMode ? (
+                    <CreateChatBoxContainer
+                      onWorkspaceCreated={handleWorkspaceCreated}
+                    />
+                  ) : (
+                    <WorkspacesMainContainer
+                      ref={mainContainerRef}
+                      selectedWorkspace={selectedWorkspace ?? null}
+                      selectedSession={selectedSession}
+                      selectedSessionId={selectedSessionId}
+                      sessions={sessions}
+                      repos={repos}
+                      onSelectSession={selectSession}
+                      isLoading={isLoading}
+                      isSessionsLoading={isSessionsLoading}
+                      isNewSessionMode={isNewSessionMode}
+                      onStartNewSession={startNewSession}
                     />
                   )}
-                {rightMainPanelMode === RIGHT_MAIN_PANEL_MODES.LOGS && (
-                  <LogsContentContainer className="" />
-                )}
-                {rightMainPanelMode === RIGHT_MAIN_PANEL_MODES.PREVIEW &&
-                  selectedWorkspace?.id && (
-                    <PreviewBrowserContainer
-                      workspaceId={selectedWorkspace.id}
-                      className=""
-                    />
-                  )}
-              </Panel>
-            )}
-          </Group>
+                </Panel>
+              )}
 
-          {isRightSidebarVisible && !isCreateMode && (
-            <div className="w-[300px] shrink-0 h-full overflow-hidden">
-              <RightSidebar
-                rightMainPanelMode={rightMainPanelMode}
-                selectedWorkspace={selectedWorkspace}
-                repos={repos}
-              />
-            </div>
-          )}
-        </div>
-      </ChangesViewProvider>
-    </ReviewProvider>
+              {isLeftMainPanelVisible && rightMainPanelMode !== null && (
+                <Separator
+                  id="main-separator"
+                  className="w-1 bg-transparent hover:bg-brand/50 transition-colors cursor-col-resize"
+                />
+              )}
+
+              {rightMainPanelMode !== null && (
+                <Panel
+                  id="right-main"
+                  minSize="20%"
+                  className="min-w-0 h-full overflow-hidden"
+                >
+                  {rightMainPanelMode === RIGHT_MAIN_PANEL_MODES.CHANGES &&
+                    selectedWorkspace?.id && (
+                      <ChangesPanelContainer
+                        className=""
+                        workspaceId={selectedWorkspace.id}
+                      />
+                    )}
+                  {rightMainPanelMode === RIGHT_MAIN_PANEL_MODES.LOGS && (
+                    <LogsContentContainer className="" />
+                  )}
+                  {rightMainPanelMode === RIGHT_MAIN_PANEL_MODES.PREVIEW &&
+                    selectedWorkspace?.id && (
+                      <PreviewBrowserContainer
+                        workspaceId={selectedWorkspace.id}
+                        className=""
+                      />
+                    )}
+                </Panel>
+              )}
+            </Group>
+
+            {isRightSidebarVisible && !isCreateMode && (
+              <div className="w-[300px] shrink-0 h-full overflow-hidden">
+                <RightSidebar
+                  rightMainPanelMode={rightMainPanelMode}
+                  selectedWorkspace={selectedWorkspace}
+                  repos={repos}
+                />
+              </div>
+            )}
+          </div>
+        </ChangesViewProvider>
+      </ReviewProvider>
+    </PlanReviewProvider>
   );
 
   return (
