@@ -143,6 +143,7 @@
       "requestChanges": "Request Changes",
       "approve": "Approve",
       "clearReviewComments": "Clear review comments",
+      "clearPlanComments": "Clear plan comments",
       "edit": "Edit message",
       "scrollToPreviousMessage": "Go to previous message",
       "reset": "Reset",
@@ -168,6 +169,10 @@
     "reviewComments": {
       "count_one": "{{count}} review comment will be included",
       "count_other": "{{count}} review comments will be included"
+    },
+    "planComments": {
+      "count_one": "{{count}} plan comment will be included",
+      "count_other": "{{count}} plan comments will be included"
     },
     "workspace": {
       "create": "Create",

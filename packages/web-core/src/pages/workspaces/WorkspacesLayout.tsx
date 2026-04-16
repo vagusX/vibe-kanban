@@ -20,6 +20,7 @@ import {
   subscribeCreateModeSeedState,
 } from '@/features/create-mode/model/createModeSeedStore';
 import { ReviewProvider } from '@/shared/hooks/ReviewProvider';
+import { PlanReviewProvider } from '@/shared/hooks/PlanReviewProvider';
 import { ChangesViewProvider } from '@/shared/hooks/ChangesViewProvider';
 import { WorkspacesSidebarContainer } from './WorkspacesSidebarContainer';
 import { LogsContentContainer } from './LogsContentContainer';
@@ -209,8 +210,9 @@ export function WorkspacesLayout() {
   // WebSocket connections and scroll positions across tab switches.
   if (isMobile) {
     const mobileContent = (
-      <ReviewProvider workspaceId={selectedWorkspace?.id}>
-        <ChangesViewProvider>
+      <PlanReviewProvider workspaceId={selectedWorkspace?.id}>
+        <ReviewProvider workspaceId={selectedWorkspace?.id}>
+          <ChangesViewProvider>
           <div className="flex flex-col h-full min-h-0">
             {/* Workspaces tab */}
             <div
@@ -308,8 +310,9 @@ export function WorkspacesLayout() {
               )}
             </div>
           </div>
-        </ChangesViewProvider>
-      </ReviewProvider>
+          </ChangesViewProvider>
+        </ReviewProvider>
+      </PlanReviewProvider>
     );
 
     return (
@@ -331,8 +334,9 @@ export function WorkspacesLayout() {
   }
 
   const mainContent = (
-    <ReviewProvider workspaceId={selectedWorkspace?.id}>
-      <ChangesViewProvider>
+    <PlanReviewProvider workspaceId={selectedWorkspace?.id}>
+      <ReviewProvider workspaceId={selectedWorkspace?.id}>
+        <ChangesViewProvider>
         <div className="flex h-full">
           <Group
             orientation="horizontal"
@@ -412,8 +416,9 @@ export function WorkspacesLayout() {
             </div>
           )}
         </div>
-      </ChangesViewProvider>
-    </ReviewProvider>
+        </ChangesViewProvider>
+      </ReviewProvider>
+    </PlanReviewProvider>
   );
 
   return (

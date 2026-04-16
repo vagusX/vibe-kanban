@@ -138,6 +138,13 @@ interface ReviewCommentsProps {
   onClear: () => void;
 }
 
+interface PlanCommentsProps {
+  /** Number of plan comments */
+  count: number;
+  /** Clear all comments */
+  onClear: () => void;
+}
+
 export interface SessionChatBoxEditorRenderProps<
   TExecutor extends string = string,
 > {
@@ -167,6 +174,7 @@ interface SessionChatBoxProps<TExecutor extends string = string> {
   approvalMode?: ApprovalModeProps;
   askQuestionMode?: AskQuestionModeProps;
   reviewComments?: ReviewCommentsProps;
+  planComments?: PlanCommentsProps;
   toolbarActions?: ToolbarActionsProps;
   modelSelector?: ReactNode;
   error?: string | null;
@@ -232,6 +240,7 @@ export function SessionChatBox<TExecutor extends string = string>({
   approvalMode,
   askQuestionMode,
   reviewComments,
+  planComments,
   toolbarActions,
   modelSelector,
   error,
@@ -287,7 +296,9 @@ export function SessionChatBox<TExecutor extends string = string>({
       askQuestionMode?.isSubmitting
   );
   const hasContent =
-    editor.value.trim().length > 0 || (reviewComments?.count ?? 0) > 0;
+    editor.value.trim().length > 0 ||
+    (reviewComments?.count ?? 0) > 0 ||
+    (planComments?.count ?? 0) > 0;
   const canSend =
     hasContent && !['sending', 'stopping', 'queue-loading'].includes(status);
   const isQueued = status === 'queued';
@@ -597,6 +608,29 @@ export function SessionChatBox<TExecutor extends string = string>({
             onClick={reviewComments.onClear}
             className="text-low hover:text-normal transition-colors p-1 -m-1"
             title={t('conversation.actions.clearReviewComments')}
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </div>
+      );
+    }
+
+    if (planComments && planComments.count > 0) {
+      banners.push(
+        <div
+          key="plan-comments"
+          className="bg-accent/5 border-b px-double py-base flex items-center gap-base"
+        >
+          <ChatCircleIcon className="h-4 w-4 text-brand flex-shrink-0" />
+          <span className="text-sm text-normal flex-1">
+            {t('conversation.planComments.count', {
+              count: planComments.count,
+            })}
+          </span>
+          <button
+            onClick={planComments.onClear}
+            className="text-low hover:text-normal transition-colors p-1 -m-1"
+            title={t('conversation.actions.clearPlanComments')}
           >
             <TrashIcon className="h-4 w-4" />
           </button>
