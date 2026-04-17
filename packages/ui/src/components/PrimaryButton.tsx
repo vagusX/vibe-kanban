@@ -21,13 +21,15 @@ export function PrimaryButton({
   children,
   className,
 }: PrimaryButtonProps) {
-  const resolvedVariant = disabled
-    ? 'outline'
-    : variant === 'tertiary'
-      ? 'ghost'
-      : variant === 'secondary'
-        ? 'secondary'
-        : 'default';
+  let resolvedVariant: 'default' | 'secondary' | 'ghost' | 'outline' =
+    'default';
+  if (disabled) {
+    resolvedVariant = 'outline';
+  } else if (variant === 'tertiary') {
+    resolvedVariant = 'ghost';
+  } else if (variant === 'secondary') {
+    resolvedVariant = 'secondary';
+  }
 
   const variantStyles = disabled
     ? 'bg-panel'
