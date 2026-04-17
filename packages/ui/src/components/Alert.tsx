@@ -8,7 +8,7 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-high',
+        default: 'bg-[hsl(var(--background))] text-high',
         destructive:
           'border-[hsl(var(--destructive)/0.5)] text-[hsl(var(--destructive))] [&>svg]:text-[hsl(var(--destructive))]',
         success:
