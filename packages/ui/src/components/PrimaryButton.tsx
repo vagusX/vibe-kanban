@@ -1,5 +1,6 @@
 import { SpinnerIcon, type Icon } from '@phosphor-icons/react';
 import { cn } from '../lib/cn';
+import { Button } from './Button';
 
 interface PrimaryButtonProps {
   variant?: 'default' | 'secondary' | 'tertiary';
@@ -20,18 +21,27 @@ export function PrimaryButton({
   children,
   className,
 }: PrimaryButtonProps) {
-  const variantStyles = disabled
-    ? 'cursor-not-allowed bg-panel'
-    : variant === 'default'
-      ? 'bg-brand hover:bg-brand-hover text-on-brand'
+  const resolvedVariant = disabled
+    ? 'outline'
+    : variant === 'tertiary'
+      ? 'ghost'
       : variant === 'secondary'
-        ? 'bg-brand-secondary hover:bg-brand-hover text-on-brand'
-        : 'bg-panel hover:bg-secondary text-normal';
+        ? 'secondary'
+        : 'default';
+
+  const variantStyles = disabled
+    ? 'bg-panel'
+    : variant === 'default'
+      ? 'bg-brand hover:bg-brand-hover text-on-brand border-transparent'
+      : variant === 'secondary'
+        ? 'bg-brand-secondary hover:bg-brand-hover text-on-brand border-transparent'
+        : 'bg-panel hover:bg-secondary text-normal border border-border';
 
   return (
-    <button
+    <Button
+      variant={resolvedVariant}
       className={cn(
-        'rounded-sm px-base py-half text-cta min-h-cta flex gap-half items-center',
+        'h-auto rounded-sm px-base py-half text-cta min-h-cta flex gap-half items-center font-normal',
         variantStyles,
         className
       )}
@@ -47,6 +57,6 @@ export function PrimaryButton({
           <ActionIcon className={'size-icon-xs'} weight="bold" />
         )
       ) : null}
-    </button>
+    </Button>
   );
 }
