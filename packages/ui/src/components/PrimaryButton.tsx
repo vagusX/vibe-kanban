@@ -21,8 +21,7 @@ export function PrimaryButton({
   children,
   className,
 }: PrimaryButtonProps) {
-  let resolvedVariant: 'default' | 'secondary' | 'ghost' | 'outline' =
-    'default';
+  let resolvedVariant: 'default' | 'secondary' | 'ghost' | 'outline' = 'default';
   if (disabled) {
     resolvedVariant = 'outline';
   } else if (variant === 'tertiary') {
@@ -31,22 +30,10 @@ export function PrimaryButton({
     resolvedVariant = 'secondary';
   }
 
-  const variantStyles = disabled
-    ? 'bg-panel'
-    : variant === 'default'
-      ? 'bg-brand hover:bg-brand-hover text-on-brand border-transparent'
-      : variant === 'secondary'
-        ? 'bg-brand-secondary hover:bg-brand-hover text-on-brand border-transparent'
-        : 'bg-panel hover:bg-secondary text-normal border border-border';
-
   return (
     <Button
       variant={resolvedVariant}
-      className={cn(
-        'h-auto rounded-sm px-base py-half text-cta min-h-cta flex gap-half items-center font-normal',
-        variantStyles,
-        className
-      )}
+      className={cn('gap-2 font-normal', className)}
       onClick={onClick}
       disabled={disabled}
     >

@@ -15,7 +15,7 @@ const TableHead = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn('uppercase text-muted-foreground', className)}
+    className={cn('uppercase text-low', className)}
     {...props}
   />
 ));
@@ -71,7 +71,7 @@ const TableEmpty = ({
   children: React.ReactNode;
 }) => (
   <TableRow>
-    <TableCell colSpan={colSpan} className="text-muted-foreground">
+    <TableCell colSpan={colSpan} className="text-low">
       {children}
     </TableCell>
   </TableRow>

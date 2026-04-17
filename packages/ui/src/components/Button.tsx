@@ -6,30 +6,31 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/cn';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring/40 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed',
   {
     variants: {
       variant: {
         default:
-          'text-primary-foreground hover:bg-primary/90 border border-foreground',
+          'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary)/0.9)]',
         destructive:
-          'border border-destructive text-destructive hover:bg-destructive/10',
+          'bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:bg-[hsl(var(--destructive)/0.9)]',
         outline:
-          'border border-input hover:bg-accent hover:text-accent-foreground',
-        secondary: 'text-secondary-foreground hover:bg-secondary/80 border',
-        ghost: 'hover:text-primary-foreground/50',
+          'border border-border bg-primary hover:bg-secondary hover:text-high',
+        secondary:
+          'bg-secondary text-[hsl(var(--secondary-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]',
+        ghost: 'hover:bg-secondary hover:text-high',
         link: 'hover:underline',
-        icon: 'bg-transparent rounded text-muted-foreground hover:text-foreground',
+        icon: 'bg-transparent text-low hover:bg-secondary hover:text-high',
       },
       size: {
-        default: 'h-10 px-4 py-2',
+        default: 'h-9 px-4 py-2',
         xs: 'h-8 px-2 text-xs',
         sm: 'h-9 px-3',
         lg: 'h-11 px-8',
-        icon: 'h-10 w-10',
+        icon: 'h-9 w-9',
       },
     },
-    compoundVariants: [{ variant: 'icon', class: 'p-0 h-4' }],
+    compoundVariants: [{ variant: 'icon', class: 'p-0' }],
     defaultVariants: {
       variant: 'default',
       size: 'default',
