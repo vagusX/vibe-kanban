@@ -42,6 +42,21 @@ One command. Describe the work, review the diff, ship it.
 npx vibe-kanban
 ```
 
+## Project Architecture
+
+Vibe Kanban is a monorepo with a Rust backend and TypeScript frontend packages:
+
+- **Rust workspace (`crates/`)**: backend API/server, database layer, Git/worktree operations, task execution, deployment, review tooling, and shared API type definitions.
+- **Frontend packages (`packages/`)**:
+  - `local-web`: local app shell/UI
+  - `remote-web`: cloud/remote deployment UI
+  - `web-core`: shared UI and client logic used by both web apps
+- **Shared cross-language contracts (`shared/`)**: generated TypeScript types and tool schemas sourced from Rust types.
+- **CLI distribution (`npx-cli/`)**: published entrypoint used by `npx vibe-kanban`.
+- **Assets and scripts**: packaged/static assets (`assets/`, `dev_assets_seed/`) and development automation scripts (`scripts/`).
+
+At runtime, the local web client talks to the Rust backend (Axum + Tokio), which coordinates project/task data, repository operations, coding-agent execution, and workspace lifecycle management.
+
 
 ## Installation
 
