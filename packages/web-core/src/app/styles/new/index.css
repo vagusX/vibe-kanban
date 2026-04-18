@@ -14,22 +14,22 @@ html {
   /* Light defaults */
   :root {
     color-scheme: light;
-    --_background: 0 0% 95%;
-    --_foreground: 0 0% 5%;
-    --_primary: 0 0% 5%;
-    --_primary-foreground: 0 0% 100%;
-    --_secondary: 0 0% 95%;
-    --_secondary-foreground: 0 0% 16%;
-    --_muted: 0 0% 89%;
-    --_muted-foreground: 0 0% 56%;
-    --_accent: 0 0% 92%;
-    --_accent-foreground: 0 0% 5%;
-    --_destructive: 0 59% 57%;
-    --_destructive-foreground: 0 0% 100%;
-    --_border: 0 0% 85%;
-    --_input: 0 0% 96%;
-    --_ring: 0 0% 5%;
-    --_radius: 0.125rem;
+    --_background: 0 0% 100%;
+    --_foreground: 222.2 84% 4.9%;
+    --_primary: 222.2 47.4% 11.2%;
+    --_primary-foreground: 210 40% 98%;
+    --_secondary: 210 40% 96.1%;
+    --_secondary-foreground: 222.2 47.4% 11.2%;
+    --_muted: 210 40% 96.1%;
+    --_muted-foreground: 215.4 16.3% 46.9%;
+    --_accent: 210 40% 96.1%;
+    --_accent-foreground: 222.2 47.4% 11.2%;
+    --_destructive: 0 84.2% 60.2%;
+    --_destructive-foreground: 210 40% 98%;
+    --_border: 214.3 31.8% 91.4%;
+    --_input: 214.3 31.8% 91.4%;
+    --_ring: 221.2 83.2% 53.3%;
+    --_radius: 0.5rem;
 
     /* Status (light) */
     --_success: 117 38% 50%;
@@ -59,31 +59,25 @@ html {
     --_syntax-deleted: #b31d28;
 
     /* Text (light) */
-    --text-high: 0 0% 5%;
-    --text-normal: 0 0% 20%;
-    --text-low: 0 0% 39%;
+    --text-high: var(--_foreground);
+    --text-normal: 215.4 16.3% 24.9%;
+    --text-low: var(--_muted-foreground);
 
-    /* Background (light) - with VS Code overrides */
-    --_bg-primary-default: 0 0% 100%;
-    --_bg-secondary-default: 0 0% 95%;
-    --_bg-panel-default: 0 0% 89%;
-    --bg-primary: var(--vscode-editor-background, var(--_bg-primary-default));
-    --bg-secondary: var(
-      --vscode-editorWidget-background,
-      var(--_bg-secondary-default)
-    );
-    --bg-panel: var(--vscode-input-background, var(--_bg-panel-default));
+    /* Background (light) */
+    --bg-primary: var(--_background);
+    --bg-secondary: var(--_secondary);
+    --bg-panel: var(--_background);
 
     /* Accent (light) */
-    --brand: 25 82% 54%;
-    --brand-hover: 25 75% 62%;
-    --brand-secondary: 25 82% 37%;
-    --error: 0 59% 57%;
+    --brand: var(--_ring);
+    --brand-hover: 221.2 83.2% 60%;
+    --brand-secondary: 222.2 47.4% 11.2%;
+    --error: var(--_destructive);
     --success: 117 38% 50%;
     --merged: 271 81% 46%;
 
     /* Text on accent */
-    --text-on-brand: 0 0% 100%;
+    --text-on-brand: var(--_primary-foreground);
   }
 
   /* Dark mode */
@@ -91,21 +85,21 @@ html {
     color-scheme: dark;
 
     /* Internal variables (dark) - needed for public tokens */
-    --_background: 0 0% 13%;
-    --_foreground: 0 0% 96%;
-    --_primary: 240 4.8% 95.9%;
-    --_primary-foreground: 240 5.9% 10%;
-    --_secondary: 0 0% 12%;
-    --_secondary-foreground: 0 0% 77%;
-    --_muted: 0 0% 16%;
-    --_muted-foreground: 0 0% 64%;
-    --_accent: 0 0% 20%;
-    --_accent-foreground: 0 0% 96%;
-    --_destructive: 0 59% 57%;
-    --_destructive-foreground: 0 0% 96%;
-    --_border: 0 0% 20%;
-    --_input: 0 0% 20%;
-    --_ring: 0 0% 77%;
+    --_background: 222.2 84% 4.9%;
+    --_foreground: 210 40% 98%;
+    --_primary: 210 40% 98%;
+    --_primary-foreground: 222.2 47.4% 11.2%;
+    --_secondary: 217.2 32.6% 17.5%;
+    --_secondary-foreground: 210 40% 98%;
+    --_muted: 217.2 32.6% 17.5%;
+    --_muted-foreground: 215 20.2% 65.1%;
+    --_accent: 217.2 32.6% 17.5%;
+    --_accent-foreground: 210 40% 98%;
+    --_destructive: 0 62.8% 30.6%;
+    --_destructive-foreground: 210 40% 98%;
+    --_border: 217.2 32.6% 17.5%;
+    --_input: 217.2 32.6% 17.5%;
+    --_ring: 224.3 76.3% 48%;
 
     /* Status (dark) */
     --_success: 117 38% 50%;
@@ -118,31 +112,25 @@ html {
     --_neutral-foreground: 0 0% 90%;
 
     /* Text (dark) */
-    --text-high: 0 0% 96%;
-    --text-normal: 0 0% 77%;
-    --text-low: 0 0% 56%;
+    --text-high: var(--_foreground);
+    --text-normal: 210 40% 96%;
+    --text-low: var(--_muted-foreground);
 
-    /* Background (dark) - with VS Code overrides */
-    --_bg-primary-default: 0 0% 13%;
-    --_bg-secondary-default: 0 0% 11%;
-    --_bg-panel-default: 0 0% 16%;
-    --bg-primary: var(--vscode-editor-background, var(--_bg-primary-default));
-    --bg-secondary: var(
-      --vscode-editorWidget-background,
-      var(--_bg-secondary-default)
-    );
-    --bg-panel: var(--vscode-input-background, var(--_bg-panel-default));
+    /* Background (dark) */
+    --bg-primary: var(--_background);
+    --bg-secondary: var(--_secondary);
+    --bg-panel: var(--_background);
 
     /* Accent (dark) */
-    --brand: 25 82% 54%;
-    --brand-hover: 25 75% 62%;
-    --brand-secondary: 25 82% 37%;
-    --error: 0 59% 57%;
+    --brand: var(--_ring);
+    --brand-hover: 224.3 76.3% 56%;
+    --brand-secondary: 210 40% 98%;
+    --error: var(--_destructive);
     --success: 117 38% 50%;
     --merged: 271 81% 66%;
 
     /* Text on accent */
-    --text-on-brand: 0 0% 100%;
+    --text-on-brand: var(--_primary-foreground);
     /* Console (dark) */
     --_console-background: 0 0% 0%;
     --_console-foreground: 210 40% 98%;
@@ -165,81 +153,48 @@ html {
 /* 2) PUBLIC TOKENS */
 @layer base {
   :root {
-    --background: var(--vscode-editor-background, var(--_background));
-    --foreground: var(--vscode-editor-foreground, var(--_foreground));
+    --background: var(--_background);
+    --foreground: var(--_foreground);
 
     --card: var(--muted);
     --card-foreground: var(--muted-foreground);
     --popover: var(--background);
     --popover-foreground: var(--foreground);
 
-    --primary: var(--vscode-button-background, var(--_primary));
-    --primary-foreground: var(
-      --vscode-editor-foreground,
-      var(--_primary-foreground)
-    );
-    --secondary: var(--vscode-input-background, var(--_secondary));
-    --secondary-foreground: var(
-      --vscode-input-foreground,
-      var(--_secondary-foreground)
-    );
+    --primary: var(--_primary);
+    --primary-foreground: var(--_primary-foreground);
+    --secondary: var(--_secondary);
+    --secondary-foreground: var(--_secondary-foreground);
 
-    --muted: var(--vscode-editor-background, var(--_muted));
-    --muted-foreground: var(
-      --vscode-descriptionForeground,
-      var(--_muted-foreground)
-    );
-    --accent: var(--vscode-focusBorder, var(--_accent));
-    --accent-foreground: var(
-      --vscode-editor-foreground,
-      var(--_accent-foreground)
-    );
+    --muted: var(--_muted);
+    --muted-foreground: var(--_muted-foreground);
+    --accent: var(--_accent);
+    --accent-foreground: var(--_accent-foreground);
 
-    --destructive: var(--vscode-errorForeground, var(--_destructive));
-    --destructive-foreground: var(
-      --vscode-button-foreground,
-      var(--_destructive-foreground)
-    );
+    --destructive: var(--_destructive);
+    --destructive-foreground: var(--_destructive-foreground);
 
-    --border: var(--vscode-input-background, var(--_border));
-    --input: var(--vscode-input-background, var(--_input));
-    --ring: var(--vscode-focusBorder, var(--_ring));
+    --border: var(--_border);
+    --input: var(--_input);
+    --ring: var(--_ring);
 
     --radius: var(--_radius);
 
     /* Status */
-    --success: var(--vscode-testing-iconPassed, var(--_success));
-    --success-foreground: var(
-      --vscode-editor-foreground,
-      var(--_success-foreground)
-    );
-    --warning: var(--vscode-testing-iconQueued, var(--_warning));
-    --warning-foreground: var(
-      --vscode-descriptionForeground,
-      var(--_warning-foreground)
-    );
-    --info: var(--vscode-focusBorder, var(--_info));
-    --info-foreground: var(--vscode-editor-foreground, var(--_info-foreground));
-    --neutral: var(--vscode-input-background, var(--_neutral));
-    --neutral-foreground: var(
-      --vscode-editor-foreground,
-      var(--_neutral-foreground)
-    );
+    --success: var(--_success);
+    --success-foreground: var(--_success-foreground);
+    --warning: var(--_warning);
+    --warning-foreground: var(--_warning-foreground);
+    --info: var(--_info);
+    --info-foreground: var(--_info-foreground);
+    --neutral: var(--_neutral);
+    --neutral-foreground: var(--_neutral-foreground);
 
     /* Console/terminal */
-    --console-background: var(
-      --vscode-editor-background,
-      var(--_console-background)
-    );
-    --console-foreground: var(
-      --vscode-terminal-foreground,
-      var(--_console-foreground)
-    );
-    --console-success: var(
-      --vscode-testing-iconPassed,
-      var(--_console-success)
-    );
-    --console-error: var(--vscode-terminal-ansiRed, var(--_console-error));
+    --console-background: var(--_console-background);
+    --console-foreground: var(--_console-foreground);
+    --console-success: var(--_console-success);
+    --console-error: var(--_console-error);
 
     /* Syntax highlighting */
     --syntax-keyword: var(--_syntax-keyword);
