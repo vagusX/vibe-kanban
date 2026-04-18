@@ -360,9 +360,8 @@ export function LandingPage() {
             />
             <AlertDescription className="text-normal">
               Vibe Kanban runs AI coding agents with{' '}
-              <code>--dangerously-skip-permissions</code> /{' '}
-              <code>--yolo</code> by default. Always review what agents are
-              doing.{' '}
+              <code>--dangerously-skip-permissions</code> / <code>--yolo</code>{' '}
+              by default. Always review what agents are doing.{' '}
               <a
                 href="https://www.vibekanban.com/docs/getting-started#safety-notice"
                 target="_blank"
@@ -463,8 +462,8 @@ export function LandingPage() {
                     onChange={(e) => setCustomCommand(e.target.value)}
                     placeholder="e.g. code --wait"
                     className={cn(
-                      'h-auto rounded-sm bg-panel px-base py-half text-high',
-                      'placeholder:opacity-80 focus-visible:ring-1 focus-visible:ring-brand',
+                      'rounded-sm bg-panel placeholder:opacity-80',
+                      'focus-visible:ring-brand',
                       customCommand.trim() === ''
                         ? 'border-warning/60'
                         : 'border-border'

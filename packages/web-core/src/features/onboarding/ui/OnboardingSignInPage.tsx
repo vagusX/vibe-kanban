@@ -11,7 +11,6 @@ import { usePostHog } from 'posthog-js/react';
 import { useUserSystem } from '@/shared/hooks/useUserSystem';
 import { useTheme } from '@/shared/hooks/useTheme';
 import { Alert, AlertDescription } from '@vibe/ui/components/Alert';
-import { Button } from '@vibe/ui/components/Button';
 import { OAuthSignInButton } from '@vibe/ui/components/OAuthButtons';
 import { PrimaryButton } from '@vibe/ui/components/PrimaryButton';
 import { oauthApi, type AuthMethodsResponse } from '@/shared/lib/api';
@@ -357,10 +356,9 @@ export function OnboardingSignInPage() {
               </section>
 
               <div className="flex justify-center">
-                <Button
+                <button
                   type="button"
-                  variant="link"
-                  className="h-auto px-0 py-0 text-low underline-offset-2 hover:text-normal"
+                  className="text-sm text-low hover:text-normal underline underline-offset-2"
                   onClick={() => {
                     if (!showComparison) {
                       trackRemoteOnboardingEvent(
@@ -375,7 +373,7 @@ export function OnboardingSignInPage() {
                   disabled={saving || pendingProvider !== null}
                 >
                   {t('onboardingSignIn.moreOptions')}
-                </Button>
+                </button>
               </div>
             </>
           )}
