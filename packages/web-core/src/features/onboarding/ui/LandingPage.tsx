@@ -359,21 +359,19 @@ export function LandingPage() {
               weight="fill"
             />
             <AlertDescription className="text-normal">
-              <p>
-                Vibe Kanban runs AI coding agents with{' '}
-                <code>--dangerously-skip-permissions</code> /{' '}
-                <code>--yolo</code> by default. Always review what agents are
-                doing.{' '}
-                <a
-                  href="https://www.vibekanban.com/docs/getting-started#safety-notice"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand hover:underline"
-                >
-                  Learn more
-                </a>
-                .
-              </p>
+              Vibe Kanban runs AI coding agents with{' '}
+              <code>--dangerously-skip-permissions</code> /{' '}
+              <code>--yolo</code> by default. Always review what agents are
+              doing.{' '}
+              <a
+                href="https://www.vibekanban.com/docs/getting-started#safety-notice"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand hover:underline"
+              >
+                Learn more
+              </a>
+              .
             </AlertDescription>
           </Alert>
         </header>
