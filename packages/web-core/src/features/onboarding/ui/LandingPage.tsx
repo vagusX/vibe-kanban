@@ -39,6 +39,9 @@ import { getIdeName } from '@/shared/lib/ideName';
 import { cn, playSound } from '@/shared/lib/utils';
 import { isTauriApp } from '@/shared/lib/platform';
 import { useAppNavigation } from '@/shared/hooks/useAppNavigation';
+import { Alert, AlertDescription } from '@vibe/ui/components/Alert';
+import { Input } from '@vibe/ui/components/Input';
+import { Label } from '@vibe/ui/components/Label';
 import { PrimaryButton } from '@vibe/ui/components/PrimaryButton';
 
 type SoundOption = {
@@ -350,29 +353,26 @@ export function LandingPage() {
               ))}
             </div>
           </div>
-          <div className="rounded-sm border border-brand bg-brand/20 p-base">
-            <div className="flex items-start gap-base">
-              <WarningIcon
-                className="size-icon-sm text-brand shrink-0 mt-[2px]"
-                weight="fill"
-              />
-              <p className="text-sm text-normal">
-                Vibe Kanban runs AI coding agents with{' '}
-                <code>--dangerously-skip-permissions</code> /{' '}
-                <code>--yolo</code> by default. Always review what agents are
-                doing.{' '}
-                <a
-                  href="https://www.vibekanban.com/docs/getting-started#safety-notice"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand hover:underline"
-                >
-                  Learn more
-                </a>
-                .
-              </p>
-            </div>
-          </div>
+          <Alert className="border-brand bg-brand/20 text-normal">
+            <WarningIcon
+              className="size-icon-sm text-brand shrink-0 mt-[2px]"
+              weight="fill"
+            />
+            <AlertDescription>
+              Vibe Kanban runs AI coding agents with{' '}
+              <code>--dangerously-skip-permissions</code> / <code>--yolo</code>{' '}
+              by default. Always review what agents are doing.{' '}
+              <a
+                href="https://www.vibekanban.com/docs/getting-started#safety-notice"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand hover:underline"
+              >
+                Learn more
+              </a>
+              .
+            </AlertDescription>
+          </Alert>
         </header>
 
         {/* 3-column grid */}
@@ -455,18 +455,15 @@ export function LandingPage() {
 
               {editorType === EditorType.CUSTOM && (
                 <div className="space-y-half">
-                  <label className="text-sm font-medium text-normal">
-                    Custom Command
-                  </label>
-                  <input
+                  <Label className="text-normal">Custom Command</Label>
+                  <Input
                     type="text"
                     value={customCommand}
                     onChange={(e) => setCustomCommand(e.target.value)}
                     placeholder="e.g. code --wait"
                     className={cn(
-                      'w-full bg-panel border rounded-sm px-base py-half text-sm text-high',
-                      'placeholder:text-low placeholder:opacity-80 focus:outline-none',
-                      'focus:ring-1 focus:ring-brand',
+                      'rounded-sm bg-panel placeholder:opacity-80',
+                      'focus-visible:ring-brand',
                       customCommand.trim() === ''
                         ? 'border-warning/60'
                         : 'border-border'

@@ -10,6 +10,7 @@ import {
 import { usePostHog } from 'posthog-js/react';
 import { useUserSystem } from '@/shared/hooks/useUserSystem';
 import { useTheme } from '@/shared/hooks/useTheme';
+import { Alert, AlertDescription } from '@vibe/ui/components/Alert';
 import { OAuthSignInButton } from '@vibe/ui/components/OAuthButtons';
 import { PrimaryButton } from '@vibe/ui/components/PrimaryButton';
 import { oauthApi, type AuthMethodsResponse } from '@/shared/lib/api';
@@ -290,13 +291,13 @@ export function OnboardingSignInPage() {
           </header>
 
           {isAuthMethodsError && !isLoggedIn && (
-            <div className="rounded-sm border border-error/30 bg-error/10 p-base">
-              <p className="text-sm text-high">
+            <Alert className="border-error/30 bg-error/10">
+              <AlertDescription className="text-high">
                 {authMethodsError instanceof Error
                   ? authMethodsError.message
                   : 'Failed to load available sign-in methods.'}
-              </p>
-            </div>
+              </AlertDescription>
+            </Alert>
           )}
 
           {isLoggedIn ? (
