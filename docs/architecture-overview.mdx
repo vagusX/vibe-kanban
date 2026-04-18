@@ -1,0 +1,216 @@
+---
+title: "Architecture overview"
+description: "Complete architecture map of Vibe Kanban across local, cloud, relay, frontend, backend, and shared contracts"
+---
+
+This document maps the end-to-end architecture of Vibe Kanban, including local
+desktop mode, cloud mode, relay access, shared type contracts, and delivery
+pipelines.
+
+## 1) System shape at a glance
+
+Vibe Kanban is implemented as a polyglot monorepo:
+
+- **Rust workspace (`crates/`)** for backends, services, runtime orchestration,
+  and relay infrastructure
+- **TypeScript workspace (`packages/`)** for local and cloud frontends plus
+  shared web logic
+- **Shared generated contracts (`shared/`)** for Rust ↔ TypeScript type
+  interoperability
+
+There are two primary product runtimes:
+
+- **Local runtime**: desktop-first, local backend + local frontend + local
+  workspace execution
+- **Cloud runtime**: hosted backend + hosted frontend + real-time sync +
+  remote host connectivity
+
+## 2) Repository architecture by layer
+
+### Core Rust layers
+
+- **`crates/server`**: local API server (Axum), local frontend serving, preview
+  proxy, workspace/session/terminal APIs
+- **`crates/local-deployment`**: concrete local `Deployment` implementation;
+  wires DB, Git, workspaces, executors, auth context, relay, and runtime
+  services
+- **`crates/deployment`**: shared `Deployment` trait and cross-service
+  contract
+- **`crates/db`**: SQLx models and DB service
+- **`crates/services`**: domain services (container, repo, filesystem, events,
+  approvals, analytics, remote client, etc.)
+- **`crates/executors`**: coding-agent execution model, profiles, command
+  wiring, logs
+- **`crates/git`, `crates/git-host`**: Git operations and host integrations
+- **`crates/workspace-manager`, `crates/worktree-manager`**: workspace/worktree
+  lifecycle
+
+### Cloud and relay Rust layers
+
+- **`crates/remote`**: hosted Vibe Kanban Cloud backend (Axum + Postgres +
+  ElectricSQL integration + OAuth + webhook and attachment subsystems)
+- **`crates/relay-tunnel`**: relay server binary (`relay-server`) for remote
+  connectivity
+- **`crates/relay-client`, `crates/relay-control`, `crates/relay-hosts`**:
+  relay client orchestration and host lifecycle
+- **`crates/relay-ws`, `crates/ws-bridge`, `crates/relay-webrtc`**: secure
+  websocket bridge and WebRTC transport
+- **`crates/preview-proxy`**: preview traffic proxying support
+
+### Frontend layers
+
+- **`packages/local-web`**: local app frontend entrypoint (Vite + React +
+  TanStack Router/Query), local runtime providers, desktop integration
+- **`packages/remote-web`**: cloud frontend entrypoint, remote auth providers,
+  relay/WebRTC transport for local API access
+- **`packages/web-core`**: shared UI/business logic consumed by both local and
+  remote frontends
+- **`packages/ui`**: shared UI component package
+
+### Shared contract layer
+
+- **`shared/types.ts`**: generated local API types from
+  `crates/server/src/bin/generate_types.rs`
+- **`shared/remote-types.ts`**: generated cloud API types from
+  `crates/remote/src/bin/remote-generate-types.rs`
+- **`shared/schemas/`**: agent tool schemas
+
+## 3) Local runtime architecture
+
+### Runtime topology
+
+```text
+local-web (React/Vite)  <--HTTP/WebSocket-->  server (Axum, crates/server)
+                                                  |
+                                                  v
+                                      LocalDeployment (crates/local-deployment)
+                                       ├─ DBService (SQLite via crates/db)
+                                       ├─ Workspace/Worktree managers
+                                       ├─ Container + Executor services
+                                       ├─ Git + Repo + File + Events services
+                                       ├─ Optional RemoteClient (cloud bridge)
+                                       └─ Relay signing/control + preview proxy
+```
+
+### Key runtime flow
+
+1. `crates/server` bootstraps deployment, migrations/backfills, and runtime
+   caches.
+2. It starts:
+   - main API + frontend server
+   - preview proxy server
+3. Route tree (`crates/server/src/routes/mod.rs`) composes:
+   - local API modules (`/api/...`)
+   - relay auth/host relay routes
+   - local frontend fallback serving
+4. Workspace execution, terminal streams, Git operations, and attachments are
+   mediated through services injected by `LocalDeployment`.
+
+## 4) Cloud runtime architecture
+
+### Runtime topology
+
+```text
+remote-web (React/Vite SPA)
+   |
+   v
+remote server (crates/remote, Axum)
+   ├─ /v1/*      API (auth, org/project/issue/workspace domains, etc.)
+   ├─ /shape/*   auth-gated ElectricSQL proxy
+   └─ static SPA fallback (/srv/static)
+   |
+   +--> PostgreSQL (system of record)
+   +--> ElectricSQL (read-path sync stream)
+   +--> Optional object storage (R2 / Azure Blob)
+   +--> Optional integrations (GitHub App, billing, digest email, analytics)
+```
+
+### Key architectural patterns
+
+- **REST for writes, ElectricSQL shapes for read sync**
+- **Mutation + txid handshake** to align optimistic UI state with replicated
+  stream state
+- **Provider-based auth** (GitHub/Google/local), JWT session middleware
+- **Scope-checked access control** before protected data reads/writes
+
+## 5) Relay and remote access architecture
+
+Relay supports accessing host-local resources from remote/cloud contexts.
+
+```text
+remote-web
+  -> relay API/session endpoints
+  -> signed WS / WebRTC channels
+  -> host-side local backend APIs
+```
+
+Core building blocks:
+
+- `relay-client`: creates relay sessions, signs requests, handles session
+  refresh and pairing
+- `relay-ws`: frame signing and verification wrappers
+- `ws-bridge`: bridges client and upstream websocket streams
+- `relay-webrtc`: WebRTC host/client/data-channel transport
+- `relay-control`: dynamic lifecycle control for active relay sessions
+
+## 6) Frontend architecture and composition
+
+Both frontend entrypoints are thin shells:
+
+- `local-web` bootstraps local auth/runtime providers and routes
+- `remote-web` bootstraps remote auth/runtime providers and routes
+
+Most feature logic and reusable UI live in **`web-core`** and **`ui`**, which
+reduces divergence between local and cloud experiences.
+
+## 7) Data and contract architecture
+
+### Contract generation
+
+- Rust types derive/export to TypeScript using `ts-rs`
+- Local and remote backends each maintain their own generator binaries
+- Generated files in `shared/` are consumed by web packages
+
+### Persistence and sync
+
+- **Local runtime**: local DB + local filesystem/worktrees
+- **Cloud runtime**: Postgres as source of truth, ElectricSQL for live read
+  replication
+
+## 8) Security and trust boundaries
+
+- Relay APIs use signed request/session mechanics (nonce, timestamp, signature
+  headers)
+- Origin validation and request middleware are enforced in backend route stacks
+- Cloud ElectricSQL access is proxied through authenticated server routes, not
+  exposed directly
+- OAuth credentials and signing keys are runtime-managed via deployment services
+
+## 9) Build, check, and release architecture
+
+### Monorepo quality gates
+
+- `pnpm run check`: frontend + backend type/compile checks
+- `pnpm run lint`: ESLint + Rust clippy
+- `pnpm run format`: Rust fmt + frontend formatting
+
+### Runtime build paths
+
+- **Local app path**: `pnpm run dev` (backend watch + local-web Vite)
+- **Cloud path**: `pnpm run remote:dev` (Docker Compose with remote stack)
+- **Type contract path**:
+  - `pnpm run generate-types`
+  - `pnpm run remote:generate-types`
+
+## 10) Practical mental model
+
+Use this model when navigating the codebase:
+
+1. **Entrypoints** (`server`, `remote`, `local-web`, `remote-web`)
+2. **Composition layers** (`deployment`, `local-deployment`, routers/providers)
+3. **Domain services** (`services`, `db`, workspace/executor/git modules)
+4. **Transport/sync** (HTTP, WS, relay, WebRTC, ElectricSQL shapes)
+5. **Shared contracts** (`api-types` + generated `shared/*.ts`)
+
+This gives a complete map from UI interaction to backend mutation to sync and
+remote transport.
