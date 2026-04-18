@@ -358,7 +358,7 @@ export function LandingPage() {
               className="size-icon-sm text-brand shrink-0 mt-[2px]"
               weight="fill"
             />
-            <AlertDescription className="text-normal">
+            <AlertDescription>
               Vibe Kanban runs AI coding agents with{' '}
               <code>--dangerously-skip-permissions</code> / <code>--yolo</code>{' '}
               by default. Always review what agents are doing.{' '}
